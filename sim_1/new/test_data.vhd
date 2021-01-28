@@ -14,24 +14,44 @@ signal input_valid : out std_logic := '0'
 end test_data;
 
 architecture Bechavioural of test_data is  
+signal count : integer range 0 to 8 := 0;
 
 procedure delay(signal clk : in std_logic) is 
 begin
-    wait until clk'event and clk = '1';
+    wait until clk'event and clk = '1';    
 end delay;
 
 begin
+
+process(clk) is
+begin
+if clk'event and clk = '1' then
+    if count = 8 then 
+        count <= 0;
+    else
+        count <= count + 1;
+    end if;
+end if;
+end process;
+
+process(clk) is 
+begin
+if clk'event and clk = '1' then
+    if count = 4 then
+        input_valid <= '0';
+    else 
+        input_valid <= '1';
+    end if;
+end if;
+end process;
+
 process is
 begin
-    delay(clk);
     for a in 100 to 136 loop
         for b in 23 to 30 loop       
-            if ready_recieve_input = '1' then    
-                input_valid <= '1';    
+            wait until ready_recieve_input = '1'and clk'event and clk = '1' and count /= 4;  
                 input_data(0) <= to_unsigned(a,16);
-                input_data(1) <= to_unsigned(b,16);
-                delay(clk);
-        end if;
+                input_data(1) <= to_unsigned(b,16);              
       end loop;
     end loop;
     

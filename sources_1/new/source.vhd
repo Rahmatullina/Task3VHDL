@@ -37,19 +37,14 @@ signal shifts : arrShifts := (others => -2);
 
 begin
 
+ready_recieve_input <= ready_recieve;
+
 process(clk) is
 variable shiftedUnit : unsigned(15 downto 0);
 begin
 
-if clk'event and clk = '1'  then
-
-    if ready_recieve = '1' then
-        ready_recieve_input <= '1';
-    else 
-        ready_recieve_input <= '0';
-    end if; 
-    
-if input_valid = '1' and ready_recieve = '1' then 
+if clk'event and clk = '1'  then    
+    if input_valid = '1' and ready_recieve = '1' then 
         --store new data
         arrDividends(0) <= input_data(0);
         arrOriginalDividends(0) <= input_data(0);
